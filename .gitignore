@@ -1,2 +1,5 @@
 # Backups of previous dotfile versions
 .backup
+
+# Log of previous run
+.config.log

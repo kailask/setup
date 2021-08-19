@@ -7,6 +7,9 @@ readonly REPO="${HOME}/.setup"
 readonly DOTS="${REPO}/dotfiles"
 readonly OLD="${REPO}/.backup"
 
+# Script log location
+readonly LOG="${REPO}/.config.log"
+
 # Name of metadata CSV files for dotfiles
 readonly META='path'
 
@@ -22,15 +25,18 @@ readonly WINDOWS_DRIVE='c'
 readonly WINDOWS_LINK="${HOME}/win"
 readonly DISTRO_NAME='Ubuntu'
 
-# Settings files that must be linked in windows
+# Folders of files that must be linked in windows
 readonly WINDOWS_DOTFILES="windows-terminal"
 
 # Create a windows symlink for use with windows programs
 # https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/mklink
-windows_symlink(){
+create_windows_symlink(){
     # Get metadata from path file
     local link_name=$(cut -f1 -d, "${DOTS}/${1}/${META}")
     local link_parent="/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}/$(cut -f2 -d, "${DOTS}/${1}/${META}")"
+
+    # Skip file if it is in backup
+    [ $skip_linked ] && [ -e "${OLD}/${1}/${link_name}" ] && { echo "➖ ${1}/${link_name} is already linked, skipping"; return 0; }
 
     if [ -e "${link_parent}" ]; then
         # Backup if normal file (cant parse windows symlink), otherwise must remove since mklink can't overwrite
@@ -46,29 +52,67 @@ windows_symlink(){
         local target="\\\\wsl\$\\${DISTRO_NAME}$(echo "${DOTS}/${1}/${link_name}" | tr '/' '\\')"
 
         # Create symlink using cmd.exe
-        cmd.exe /c "mklink ${link} ${target}" 2> /dev/null
-        [ $? -ne 0 ] && echo "Unable to create symlink for ${1}. Does cmd have admin rights?"
+        cmd.exe /c "mklink ${link} ${target}" 2>> ${LOG}
+        [ $? -ne 0 ] && echo "❌ Unable to create symlink for ${1}/${link_name}. Does cmd have admin rights?"
     else 
-        echo "${link_parent} does not exist. Is ${1} installed?"
+        echo "❌ ${link_parent} does not exist. Is ${1} installed?"
     fi
 }
 
 setup_wsl() {
-    # Update packages
-    sudo apt update && sudo apt upgrade -y
 
+    if [ ! $only_link ]; then
+        # Update packages
+        cat << EOF
+--------------------------------------------------------------
+Updating and upgrading packages
+--------------------------------------------------------------
+EOF
+        sudo apt update 2>> ${LOG} && sudo apt upgrade -y 2>> ${LOG}
+
+        cat << EOF
+--------------------------------------------------------------
+Configuring SSH
+--------------------------------------------------------------
+EOF
+        ssh-keygen -t rsa -b 4096 -C "me@kailas.dev"
+    fi
+
+    cat << EOF
+--------------------------------------------------------------
+Creating dotfile symlinks
+--------------------------------------------------------------
+EOF
     # Create link to Windows home
     echo "Linking /mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER} -> ${WINDOWS_LINK}"
     ln -sf "/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}" "${WINDOWS_LINK}"
 
     for file in ${WINDOWS_DOTFILES}; do
-        windows_symlink $file
+        create_windows_symlink $file
     done
 }
 
 main() {
     # Check repo is in correct location
     [ -e "${REPO}" ] || { echo "${REPO} not found"; exit 1; }
+    rm -f ${LOG}
+
+    while getopts "soh" opt; do
+        case ${opt} in
+            s)
+                # Skip linking dotfiles that have been linked before
+                readonly skip_linked=1
+                ;;
+            o)
+                # Only link dotfiles, don't perform other operations
+                readonly only_link=1
+                ;;
+            h)
+                ;;
+            \?)
+                ;;
+        esac
+    done
 
     setup_wsl
 }
