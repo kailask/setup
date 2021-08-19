@@ -8,10 +8,10 @@ readonly DOTS="${REPO}/dotfiles"
 readonly OLD="${REPO}/.backup"
 
 # Script log location
-readonly LOG="${REPO}/.config.log"
+readonly LOG="${REPO}/.install.log"
 
 # Name of metadata CSV files for dotfiles
-readonly META='path'
+readonly META='metadata'
 
 # --------------------------------------------------------------
 # Functions for copying and linking dotfiles
@@ -25,23 +25,23 @@ readonly WINDOWS_DRIVE='c'
 readonly WINDOWS_LINK="${HOME}/win"
 readonly DISTRO_NAME='Ubuntu'
 
-# Folders of files that must be linked in windows
+# Files that must be linked in windows
 readonly WINDOWS_DOTFILES="windows-terminal"
 
 # Create a windows symlink for use with windows programs
 # https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/mklink
-create_windows_symlink(){
+make_windows_symlink(){
     # Get metadata from path file
     local link_name=$(cut -f1 -d, "${DOTS}/${1}/${META}")
     local link_parent="/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}/$(cut -f2 -d, "${DOTS}/${1}/${META}")"
 
     # Skip file if it is in backup
-    [ $skip_linked ] && [ -e "${OLD}/${1}/${link_name}" ] && { echo "➖ ${1}/${link_name} is already linked, skipping"; return 0; }
+    [ $skip_existing ] && [ -e "${OLD}/${1}/${link_name}" ] && { echo "➖ ${1}/${link_name} is already linked, skipping"; return 0; }
 
-    if [ -e "${link_parent}" ]; then
+    if [ -d "${link_parent}" ]; then
         # Backup if normal file (cant parse windows symlink), otherwise must remove since mklink can't overwrite
         if [ -f "${link_parent}/${link_name}" ]; then
-            [ -e "${OLD}/${1}" ] || { echo "Creating backup folder ${OLD}/${1}"; mkdir -p "${OLD}/${1}"; }
+            [ -d "${OLD}/${1}" ] || { echo "Creating backup folder ${OLD}/${1}"; mkdir -p "${OLD}/${1}"; }
             mv -f "${link_parent}/${link_name}" "${OLD}/${1}/${link_name}"
         else
             rm -f "${link_parent}/${link_name}"
@@ -61,51 +61,49 @@ create_windows_symlink(){
 
 setup_wsl() {
 
-    if [ ! $only_link ]; then
+    if [ ! $link_only ]; then
+        echo "--------------------------------------------------------------"
+        echo "Updating and upgrading packages"
+        echo "--------------------------------------------------------------"
+        
         # Update packages
-        cat << EOF
---------------------------------------------------------------
-Updating and upgrading packages
---------------------------------------------------------------
-EOF
         sudo apt update 2>> ${LOG} && sudo apt upgrade -y 2>> ${LOG}
 
-        cat << EOF
---------------------------------------------------------------
-Configuring SSH
---------------------------------------------------------------
-EOF
+        echo "--------------------------------------------------------------"
+        echo "Configuring SSH"
+        echo "--------------------------------------------------------------"
+
+        # Create ssh key
         ssh-keygen -t rsa -b 4096 -C "me@kailas.dev"
     fi
 
-    cat << EOF
---------------------------------------------------------------
-Creating dotfile symlinks
---------------------------------------------------------------
-EOF
+    echo "--------------------------------------------------------------"
+    echo "Creating dotfile symlinks"
+    echo "--------------------------------------------------------------"
+
     # Create link to Windows home
     echo "Linking /mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER} -> ${WINDOWS_LINK}"
     ln -sf "/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}" "${WINDOWS_LINK}"
 
     for file in ${WINDOWS_DOTFILES}; do
-        create_windows_symlink $file
+        make_windows_symlink $file
     done
 }
 
 main() {
     # Check repo is in correct location
-    [ -e "${REPO}" ] || { echo "${REPO} not found"; exit 1; }
+    [ -d "${REPO}" ] || { echo "${REPO} not found"; exit 1; }
     rm -f ${LOG}
 
-    while getopts "soh" opt; do
+    while getopts "slh" opt; do
         case ${opt} in
             s)
                 # Skip linking dotfiles that have been linked before
-                readonly skip_linked=1
+                skip_existing=1
                 ;;
-            o)
+            l)
                 # Only link dotfiles, don't perform other operations
-                readonly only_link=1
+                link_only=1
                 ;;
             h)
                 ;;
