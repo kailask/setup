@@ -1,0 +1,76 @@
+#!/bin/sh
+
+# Repo location
+readonly REPO="${HOME}/.setup"
+
+# Locations of dotfiles
+readonly DOTS="${REPO}/dotfiles"
+readonly OLD="${REPO}/.backup"
+
+# Name of metadata CSV files for dotfiles
+readonly META='path'
+
+# --------------------------------------------------------------
+# Functions for copying and linking dotfiles
+
+
+# --------------------------------------------------------------
+# Configurations specific to Ubuntu on WSL
+
+readonly WINDOWS_USER='me'
+readonly WINDOWS_DRIVE='c'
+readonly WINDOWS_LINK="${HOME}/win"
+readonly DISTRO_NAME='Ubuntu'
+
+# Settings files that must be linked in windows
+readonly WINDOWS_DOTFILES="windows-terminal"
+
+# Create a windows symlink for use with windows programs
+# https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/mklink
+windows_symlink(){
+    # Get metadata from path file
+    local link_name=$(cut -f1 -d, "${DOTS}/${1}/${META}")
+    local link_parent="/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}/$(cut -f2 -d, "${DOTS}/${1}/${META}")"
+
+    if [ -e "${link_parent}" ]; then
+        # Backup if normal file (cant parse windows symlink), otherwise must remove since mklink can't overwrite
+        if [ -f "${link_parent}/${link_name}" ]; then
+            [ -e "${OLD}/${1}" ] || { echo "Creating backup folder ${OLD}/${1}"; mkdir -p "${OLD}/${1}"; }
+            mv -f "${link_parent}/${link_name}" "${OLD}/${1}/${link_name}"
+        else
+            rm -f "${link_parent}/${link_name}"
+        fi
+
+        # Create windows compatible paths for symlink
+        local link="${WINDOWS_DRIVE}:\\Users\\${WINDOWS_USER}\\$(cut -f2 -d, "${DOTS}/${1}/${META}" | tr '/' '\\')\\${link_name}"
+        local target="\\\\wsl\$\\${DISTRO_NAME}$(echo "${DOTS}/${1}/${link_name}" | tr '/' '\\')"
+
+        # Create symlink using cmd.exe
+        cmd.exe /c "mklink ${link} ${target}" 2> /dev/null
+        [ $? -ne 0 ] && echo "Unable to create symlink for ${1}. Does cmd have admin rights?"
+    else 
+        echo "${link_parent} does not exist. Is ${1} installed?"
+    fi
+}
+
+setup_wsl() {
+    # Update packages
+    sudo apt update && sudo apt upgrade -y
+
+    # Create link to Windows home
+    echo "Linking /mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER} -> ${WINDOWS_LINK}"
+    ln -sf "/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}" "${WINDOWS_LINK}"
+
+    for file in ${WINDOWS_DOTFILES}; do
+        windows_symlink $file
+    done
+}
+
+main() {
+    # Check repo is in correct location
+    [ -e "${REPO}" ] || { echo "${REPO} not found"; exit 1; }
+
+    setup_wsl
+}
+
+main "$@"
