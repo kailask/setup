@@ -25,8 +25,8 @@ make_symlinks(){
 
         # Replace '~' prefix with $HOME
         case "${link_parent}" in
-            "~/"*)
-                link_parent="${HOME}/${link_parent#"~/"}"
+            "~"*)
+                link_parent="${HOME}${link_parent#"~"}"
         esac
 
         # Skip file if it is in backup
