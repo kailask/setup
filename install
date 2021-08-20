@@ -60,7 +60,11 @@ readonly WINDOWS_LINK="${HOME}/win"
 readonly DISTRO_NAME='Ubuntu'
 
 # Path to be put in /etc/environment
-readonly WSL_ENV_PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+readonly WSL_ENV_PATH="PATH=\"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:\
+/bin:/snap/bin:/mnt/${WINDOWS_DRIVE}/Windows/system32:/mnt/${WINDOWS_DRIVE}/Windows:\
+/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}/AppData/Local/Programs/Microsoft VS Code/bin:\
+/mnt/${WINDOWS_DRIVE}/Windows/System32/WindowsPowerShell/v1.0/:\
+/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}/AppData/Local/Microsoft/WindowsApps\""
 
 # List of files to be linked in WSL
 readonly WSL_DOTFILES="${SHARED_DOTFILES} wsl"
@@ -115,6 +119,13 @@ setup_wsl() {
         echo "--------------------------------------------------------------"
 
         # ssh-keygen -t rsa -b 4096
+        # ssh-agent?
+
+        echo "--------------------------------------------------------------"
+        echo "Setting /etc/environment"
+        echo "--------------------------------------------------------------"
+        
+        echo "${WSL_ENV_PATH}" | sudo tee /etc/environment ${LOG}
 
 
         # Packages: nvim, zsh, prompt, rust, exa?
