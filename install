@@ -11,7 +11,7 @@ readonly OLD="${REPO}/.backup"
 readonly LOG="${REPO}/.install.log"
 
 # Name of metadata CSV files for dotfiles
-readonly META='metadata'
+readonly META='.metadata'
 
 # List of dotfiles used across all platforms
 readonly SHARED_DOTFILES=""
@@ -42,7 +42,7 @@ make_symlinks(){
                 cp -f "${link}" "${OLD}/${1}/${link_name}"
             fi
 
-            echo "Linking ${target} -> ${link}"
+            echo "Linking ${target} -> ${link}" | tee -a "${LOG}"
             sudo ln -sf "${target}" "${link}"
         else 
             echo "❌ ${link_parent} does not exist. Is ${1} installed?"
@@ -58,6 +58,9 @@ readonly WINDOWS_USER='me'
 readonly WINDOWS_DRIVE='c'
 readonly WINDOWS_LINK="${HOME}/win"
 readonly DISTRO_NAME='Ubuntu'
+
+# Path to be put in /etc/environment
+readonly WSL_ENV_PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
 
 # List of files to be linked in WSL
 readonly WSL_DOTFILES="${SHARED_DOTFILES} wsl"
@@ -117,6 +120,8 @@ setup_wsl() {
         # Packages: nvim, zsh, prompt, rust, exa?
 
         # Switch to default: nvim, python3, zsh
+
+        
     fi
 
     echo "--------------------------------------------------------------"
@@ -124,7 +129,7 @@ setup_wsl() {
     echo "--------------------------------------------------------------"
 
     # Create link to Windows home
-    echo "Linking /mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER} -> ${WINDOWS_LINK}"
+    echo "Linking /mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER} -> ${WINDOWS_LINK}" | tee -a "${LOG}"
     ln -sf "/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}" "${WINDOWS_LINK}"
 
     for folder in ${WINDOWS_DOTFILES}; do
