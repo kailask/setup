@@ -2,4 +2,4 @@
 .backup
 
 # Log of previous run
-.config.log
+.install.log
