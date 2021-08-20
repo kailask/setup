@@ -143,7 +143,7 @@ main() {
     rm -f ${LOG}
 
     # Get sudo privileges
-    if [ ! $(sudo printf "") ]; then exit 1; fi
+    if [ $(sudo printf "") ]; then exit 1; fi
 
     while getopts "slh" opt; do
         case ${opt} in
