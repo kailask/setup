@@ -13,9 +13,43 @@ readonly LOG="${REPO}/.install.log"
 # Name of metadata CSV files for dotfiles
 readonly META='metadata'
 
-# --------------------------------------------------------------
-# Functions for copying and linking dotfiles
+# List of dotfiles used across all platforms
+readonly SHARED_DOTFILES=""
 
+# --------------------------------------------------------------
+# Parse and create links for all files in a folder
+make_symlinks(){
+    while read -r line; do
+        local link_name=$(echo "${line}" | cut -f1 -d,)
+        local link_parent=$(echo "${line}" | cut -f2 -d,)
+
+        # Replace '~' prefix with $HOME
+        case "${link_parent}" in
+            "~/"*)
+                link_parent="${HOME}/${link_parent#"~/"}"
+        esac
+
+        # Skip file if it is in backup
+        [ $skip_existing ] && [ -e "${OLD}/${1}/${link_name}" ] && { echo "➖ ${1}/${link_name} is already linked, skipping"; continue; }
+
+        if [ -d "${link_parent}" ]; then
+            local link="${link_parent}/${link_name}"
+            local target="${DOTS}/${1}/${link_name}"
+
+            # Backup existing dotfile
+            if [ -f "${link}" ]; then
+                [ -d "${OLD}/${1}" ] || { echo "Creating backup folder ${OLD}/${1}"; mkdir -p "${OLD}/${1}"; }
+                cp -f "${link}" "${OLD}/${1}/${link_name}"
+            fi
+
+            echo "Linking ${target} -> ${link}"
+            sudo ln -sf "${target}" "${link}"
+        else 
+            echo "❌ ${link_parent} does not exist. Is ${1} installed?"
+        fi
+
+    done < "${DOTS}/${1}/${META}"
+}
 
 # --------------------------------------------------------------
 # Configurations specific to Ubuntu on WSL
@@ -25,13 +59,16 @@ readonly WINDOWS_DRIVE='c'
 readonly WINDOWS_LINK="${HOME}/win"
 readonly DISTRO_NAME='Ubuntu'
 
+# List of files to be linked in WSL
+readonly WSL_DOTFILES="${SHARED_DOTFILES} wsl"
+
 # Files that must be linked in windows
 readonly WINDOWS_DOTFILES="windows-terminal"
 
 # Create a windows symlink for use with windows programs
 # https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/mklink
 make_windows_symlink(){
-    # Get metadata from path file
+    # Get metadata from metadata file
     local link_name=$(cut -f1 -d, "${DOTS}/${1}/${META}")
     local link_parent="/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}/$(cut -f2 -d, "${DOTS}/${1}/${META}")"
 
@@ -65,16 +102,19 @@ setup_wsl() {
         echo "--------------------------------------------------------------"
         echo "Updating and upgrading packages"
         echo "--------------------------------------------------------------"
-        
-        # Update packages
-        sudo apt update 2>> ${LOG} && sudo apt upgrade -y 2>> ${LOG}
+
+        # sudo apt update 2>> ${LOG} && sudo apt upgrade -y 2>> ${LOG}
 
         echo "--------------------------------------------------------------"
         echo "Configuring SSH"
         echo "--------------------------------------------------------------"
 
-        # Create ssh key
-        ssh-keygen -t rsa -b 4096 -C "me@kailas.dev"
+        # ssh-keygen -t rsa -b 4096
+
+
+        # Packages: nvim, zsh, prompt, rust, exa?
+
+        # Switch to default: nvim, python3, zsh
     fi
 
     echo "--------------------------------------------------------------"
@@ -85,15 +125,25 @@ setup_wsl() {
     echo "Linking /mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER} -> ${WINDOWS_LINK}"
     ln -sf "/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}" "${WINDOWS_LINK}"
 
-    for file in ${WINDOWS_DOTFILES}; do
-        make_windows_symlink $file
+    for folder in ${WINDOWS_DOTFILES}; do
+        make_windows_symlink $folder
+    done
+
+    for folder in ${WSL_DOTFILES}; do
+        make_symlinks $folder
     done
 }
+
+# --------------------------------------------------------------
+# Parse options and execute platform specific configuration
 
 main() {
     # Check repo is in correct location
     [ -d "${REPO}" ] || { echo "${REPO} not found"; exit 1; }
     rm -f ${LOG}
+
+    # Get sudo privileges
+    if [ ! $(sudo printf "") ]; then exit 1; fi
 
     while getopts "slh" opt; do
         case ${opt} in
