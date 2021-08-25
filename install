@@ -14,7 +14,9 @@ readonly LOG="${REPO}/.install.log"
 readonly META='.metadata'
 
 # List of dotfiles used across all platforms
-readonly SHARED_DOTFILES=""
+readonly SHARED_DOTFILES="git"
+# Packages used across all platforms
+readonly SHARED_PACKAGES="python3 python-is-python3 python3-pip"
 
 print_usage(){
     cat << EOF
@@ -84,7 +86,7 @@ readonly WSL_DOTFILES="${SHARED_DOTFILES} wsl"
 # Files that must be linked in windows filesystem
 readonly WINDOWS_DOTFILES="windows-terminal"
 
-readonly WSL_PACKAGES=""
+readonly WSL_PACKAGES="${SHARED_PACKAGES}"
 
 # Create a windows filesystem symlink for use with windows programs
 # https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/mklink
@@ -145,10 +147,12 @@ setup_wsl() {
         echo "Installing packages: ${WSL_PACKAGES}"
         echo "--------------------------------------------------------------"
 
+        sudo apt install "${WSL_PACKAGES}" 2>> ${LOG}
+
 
         # Packages: nvim, zsh, prompt, rust, exa?
 
-        # Switch to default: nvim, python3, zsh
+        # Switch to default: nvim, zsh
 
         
     fi

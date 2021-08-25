@@ -1,0 +1,18 @@
+[user]
+	name = Kailas Krivanka
+	email = 38896831+kailask@users.noreply.github.com
+
+[core]
+	editor = nvim
+
+[init]
+	defaultBranch = main
+
+[alias]
+	diffs = diff --staged
+	diffc = diff --compact-summary
+	diffcs = diff --staged --compact-summary
+	a = add --all
+	s = status --show-stash
+	c = commit -m
+	lg = log --graph --all --abbrev-commit --date=relative --decorate --format=format:'%C(bold blue)%h%C(reset) -%C(auto)%d%C(reset) %s %C(dim white)- %an%C(reset) %C(green)(%cr)'
