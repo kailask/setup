@@ -16,6 +16,18 @@ readonly META='.metadata'
 # List of dotfiles used across all platforms
 readonly SHARED_DOTFILES=""
 
+print_usage(){
+    cat << EOF
+Usage: ${0##*/} [-hsl] [-p {wsl}]
+Run setup script for specified platform.
+
+    -h          display this help and exit
+    -p PLATFORM platform for script to setup. This is required
+    -s          skip linking dotfiles that exist in .backup
+    -l          link dotfiles only, don't perform other operations
+EOF
+}
+
 # --------------------------------------------------------------
 # Parse and create links for all files in a folder
 make_symlinks(){
@@ -45,7 +57,7 @@ make_symlinks(){
             echo "Linking ${target} -> ${link}" | tee -a "${LOG}"
             sudo ln -sf "${target}" "${link}"
         else 
-            echo "❌ ${link_parent} does not exist. Is ${1} installed?"
+            echo "❌ ${link_parent} does not exist. Is ${1} installed?" >&2
         fi
 
     done < "${DOTS}/${1}/${META}"
@@ -71,6 +83,8 @@ readonly WSL_DOTFILES="${SHARED_DOTFILES} wsl"
 
 # Files that must be linked in windows filesystem
 readonly WINDOWS_DOTFILES="windows-terminal"
+
+readonly WSL_PACKAGES=""
 
 # Create a windows filesystem symlink for use with windows programs
 # https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/mklink
@@ -98,9 +112,9 @@ make_windows_symlinks(){
 
             # Create symlink using cmd.exe
             cmd.exe /c "mklink ${link} ${target}" 2>> ${LOG}
-            [ $? -ne 0 ] && echo "❌ Unable to create symlink for ${1}/${link_name}. Does cmd have admin rights?"
+            [ $? -ne 0 ] && echo "❌ Unable to create symlink for ${1}/${link_name}. Does cmd have admin rights?" >&2
         else 
-            echo "❌ ${link_parent} does not exist. Is ${1} installed?"
+            echo "❌ ${link_parent} does not exist. Is ${1} installed?" >&2
         fi
     done < "${DOTS}/${1}/${META}"
 }
@@ -125,7 +139,11 @@ setup_wsl() {
         echo "Setting /etc/environment"
         echo "--------------------------------------------------------------"
         
-        echo "${WSL_ENV_PATH}" | sudo tee /etc/environment ${LOG}
+        echo "${WSL_ENV_PATH}" | sudo tee /etc/environment | tee -a ${LOG}
+
+        echo "--------------------------------------------------------------"
+        echo "Installing packages: ${WSL_PACKAGES}"
+        echo "--------------------------------------------------------------"
 
 
         # Packages: nvim, zsh, prompt, rust, exa?
@@ -144,11 +162,11 @@ setup_wsl() {
     ln -sf "/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}" "${WINDOWS_LINK}"
 
     for folder in ${WINDOWS_DOTFILES}; do
-        make_windows_symlinks $folder
+        make_windows_symlinks ${folder}
     done
 
     for folder in ${WSL_DOTFILES}; do
-        make_symlinks $folder
+        make_symlinks ${folder}
     done
 }
 
@@ -157,13 +175,15 @@ setup_wsl() {
 
 main() {
     # Check repo is in correct location
-    [ -d "${REPO}" ] || { echo "${REPO} not found"; exit 1; }
+    [ -d "${REPO}" ] || { echo "${REPO} not found" >&2; exit 1; }
     rm -f ${LOG}
 
     # Get sudo privileges
     if [ $(sudo printf "") ]; then exit 1; fi
 
-    while getopts "slh" opt; do
+    local platform=""
+    local OPTIND=1
+    while getopts ":slp:h" opt; do
         case ${opt} in
             s)
                 # Skip linking dotfiles that have been linked before
@@ -173,14 +193,35 @@ main() {
                 # Only link dotfiles, don't perform other operations
                 link_only=1
                 ;;
+            p)
+                platform="${OPTARG}"
+                ;;
             h)
+                print_usage
+                exit 0
                 ;;
             \?)
+                echo "Invalid option: -${OPTARG}" >&2
+                print_usage >&2
+                exit 1
+                ;;
+            :)
+                echo "-${OPTARG} requires an argument." >&2
+                print_usage >&2
+                exit 1
                 ;;
         esac
     done
 
-    setup_wsl
+    case ${platform} in
+        "wsl")
+            setup_wsl
+            ;;
+        *)
+            echo "Invalid platform specified." >&2
+            print_usage >&2
+            exit 1
+    esac 
 }
 
 main "$@"
