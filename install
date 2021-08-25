@@ -14,9 +14,9 @@ readonly LOG="${REPO}/.install.log"
 readonly META='.metadata'
 
 # List of dotfiles used across all platforms
-readonly SHARED_DOTFILES="git"
+readonly SHARED_DOTFILES="git nvim"
 # Packages used across all platforms
-readonly SHARED_PACKAGES="python3 python-is-python3 python3-pip"
+readonly SHARED_PACKAGES="python3 python-is-python3 python3-pip neovim"
 
 print_usage(){
     cat << EOF
@@ -46,21 +46,20 @@ make_symlinks(){
         # Skip file if it is in backup
         [ $skip_existing ] && [ -e "${OLD}/${1}/${link_name}" ] && { echo "➖ ${1}/${link_name} is already linked, skipping"; continue; }
 
-        if [ -d "${link_parent}" ]; then
-            local link="${link_parent}/${link_name}"
-            local target="${DOTS}/${1}/${link_name}"
+        # Create parent folder if necessary
+        [ -d "${link_parent}" ] || { echo "Creating folder ${link_parent}"; mkdir -p "${link_parent}"; }
 
-            # Backup existing dotfile
-            if [ -f "${link}" ]; then
-                [ -d "${OLD}/${1}" ] || { echo "Creating backup folder ${OLD}/${1}"; mkdir -p "${OLD}/${1}"; }
-                cp -f "${link}" "${OLD}/${1}/${link_name}"
-            fi
+        local link="${link_parent}/${link_name}"
+        local target="${DOTS}/${1}/${link_name}"
 
-            echo "Linking ${target} -> ${link}" | tee -a "${LOG}"
-            sudo ln -sf "${target}" "${link}"
-        else 
-            echo "❌ ${link_parent} does not exist. Is ${1} installed?" >&2
+        # Backup existing dotfile
+        if [ -f "${link}" ]; then
+            [ -d "${OLD}/${1}" ] || { echo "Creating backup folder ${OLD}/${1}"; mkdir -p "${OLD}/${1}"; }
+            cp -f "${link}" "${OLD}/${1}/${link_name}"
         fi
+
+        echo "Linking ${target} -> ${link}" | tee -a "${LOG}"
+        sudo ln -sf "${target}" "${link}"
 
     done < "${DOTS}/${1}/${META}"
 }
@@ -150,9 +149,9 @@ setup_wsl() {
         sudo apt install "${WSL_PACKAGES}" 2>> ${LOG}
 
 
-        # Packages: nvim, zsh, prompt, rust, exa?
+        # Packages: zsh, prompt, rust, exa?
 
-        # Switch to default: nvim, zsh
+        # Switch to default: nvim, zsh, exa?
 
         
     fi
