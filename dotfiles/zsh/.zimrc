@@ -1,0 +1,45 @@
+# -------
+# Modules
+# -------
+
+# --------------------------------------------------------------
+# Sets sane Zsh built-in environment options.
+# History options, recent directory stack, auto cd, etc
+# https://github.com/zimfw/environment
+zmodule environment
+
+# --------------------------------------------------------------
+# Applies correct bindkeys for input events.
+# .. expansion, edit line in editor <Ctrl-x><Ctrl-e>,
+# jump word <Ctrl-left,right>, rebind keys, etc
+# https://github.com/zimfw/input
+zmodule input
+
+# --------------------------------------------------------------
+# Sets a custom terminal title.
+# https://github.com/zimfw/termtitle
+#zmodule termtitle
+
+# Additional completion definitions for Zsh.
+#zmodule zsh-users/zsh-completions
+# Enables and configures smart and extensive tab completion.
+# completion must be sourced after zsh-users/zsh-completions
+#zmodule completion
+# Fish-like autosuggestions for Zsh.
+#zmodule zsh-users/zsh-autosuggestions
+# Fish-like syntax highlighting for Zsh.
+# zsh-users/zsh-syntax-highlighting must be sourced after completion
+#zmodule zsh-users/zsh-syntax-highlighting
+# Fish-like history search (up arrow) for Zsh.
+# zsh-users/zsh-history-substring-search must be sourced after zsh-users/zsh-syntax-highlighting
+#zmodule zsh-users/zsh-history-substring-search
+
+# ------
+# Prompt
+# ------
+# Exposes to prompts how long the last command took to execute, used by asciiship.
+#zmodule duration-info
+# Exposes git repository status information to prompts, used by asciiship.
+#zmodule git-info
+# A heavily reduced, ASCII-only version of the Spaceship and Starship prompts.
+#zmodule asciiship

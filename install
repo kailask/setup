@@ -14,9 +14,9 @@ readonly LOG="${REPO}/.install.log"
 readonly META='.metadata'
 
 # List of dotfiles used across all platforms
-readonly SHARED_DOTFILES="git nvim"
+readonly SHARED_DOTFILES="git nvim zsh"
 # Packages used across all platforms
-readonly SHARED_PACKAGES="python3 python-is-python3 python3-pip neovim"
+readonly SHARED_PACKAGES="python3 python-is-python3 python3-pip neovim zsh"
 
 print_usage(){
     cat << EOF
@@ -95,7 +95,7 @@ make_windows_symlinks(){
         # Windows symlink paths must be relative to windows user home folder
         local link_parent="/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}/$(echo "${line}" | cut -f2 -d,)"
 
-        # # Skip file if it is in backup
+        # Skip file if it is in backup
         [ $skip_existing ] && [ -e "${OLD}/${1}/${link_name}" ] && { echo "➖ ${1}/${link_name} is already linked, skipping"; continue; }
 
         if [ -d "${link_parent}" ]; then
@@ -146,7 +146,7 @@ setup_wsl() {
         echo "Installing packages: ${WSL_PACKAGES}"
         echo "--------------------------------------------------------------"
 
-        sudo apt install "${WSL_PACKAGES}" 2>> ${LOG}
+        sudo apt install ${WSL_PACKAGES} -y 2>> ${LOG}
 
 
         # Packages: zsh, prompt, rust, exa?
@@ -171,6 +171,30 @@ setup_wsl() {
     for folder in ${WSL_DOTFILES}; do
         make_symlinks ${folder}
     done
+
+    if [ ! $link_only ]; then
+        echo "--------------------------------------------------------------"
+        echo "Setting up ZSH"
+        echo "--------------------------------------------------------------"
+
+        # Set zsh to default shell
+        sudo chsh -s "$(which zsh)" "${USER}"
+
+        # Install ZIM (https://zimfw.sh)
+        mkdir -p "${HOME}/.config/zsh/zim"
+        curl -fsSL "https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh" > "${HOME}/.config/zsh/zim/zimfw.zsh"
+        zsh "${HOME}/.config/zsh/zim/zimfw.zsh" install
+
+        # Remove old bash files
+        rm "${HOME}/.bash_history" "${HOME}/.bash_logout" "${HOME}/.bashrc" "${HOME}/.profile" 2> /dev/null
+
+
+        # Packages: zsh, prompt, rust, exa?
+
+        # Switch to default: nvim, zsh, exa?
+
+        
+    fi
 }
 
 # --------------------------------------------------------------

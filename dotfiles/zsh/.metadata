@@ -1,0 +1,4 @@
+.zshenv,~
+.zlogin,~/.config/zsh
+.zshrc,~/.config/zsh
+.zimrc,~/.config/zsh
