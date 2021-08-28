@@ -43,3 +43,5 @@ zmodule input
 #zmodule git-info
 # A heavily reduced, ASCII-only version of the Spaceship and Starship prompts.
 #zmodule asciiship
+
+zmodule spaceship-prompt/spaceship-prompt --name spaceship

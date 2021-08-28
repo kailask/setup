@@ -62,6 +62,23 @@ source ${ZIM_HOME}/init.zsh
 # Post-init module configuration
 # ------------------------------
 
+SPACESHIP_PROMPT_ORDER=(
+  time          # Time stamps section
+  user          # Username section
+  dir           # Current directory section
+  host          # Hostname section
+  git           # Git section (git_branch + git_status)
+  # docker        # Docker section
+  exec_time     # Execution time
+  # line_sep      # Line break
+  vi_mode       # Vi-mode indicator
+  jobs          # Background jobs indicator
+  exit_code     # Exit code section
+  char          # Prompt character
+)
+
+SPACESHIP_PROMPT_ADD_NEWLINE=false
+
 #
 # zsh-history-substring-search
 #

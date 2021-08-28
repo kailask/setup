@@ -72,7 +72,7 @@ readonly WINDOWS_DRIVE='c'
 readonly WINDOWS_LINK="${HOME}/win"
 readonly DISTRO_NAME='Ubuntu'
 
-# Path to be put in /etc/environment
+# Path to be put in /etc/zsh/zshenv
 readonly WSL_ENV_PATH="PATH=\"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:\
 /bin:/snap/bin:/mnt/${WINDOWS_DRIVE}/Windows/system32:/mnt/${WINDOWS_DRIVE}/Windows:\
 /mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}/AppData/Local/Programs/Microsoft VS Code/bin:\
@@ -134,13 +134,7 @@ setup_wsl() {
         echo "--------------------------------------------------------------"
 
         # ssh-keygen -t rsa -b 4096
-        # ssh-agent?
-
-        echo "--------------------------------------------------------------"
-        echo "Setting /etc/environment"
-        echo "--------------------------------------------------------------"
-        
-        echo "${WSL_ENV_PATH}" | sudo tee /etc/environment | tee -a ${LOG}
+        # ssh-agent?      
 
         echo "--------------------------------------------------------------"
         echo "Installing packages: ${WSL_PACKAGES}"
@@ -180,13 +174,16 @@ setup_wsl() {
         # Set zsh to default shell
         sudo chsh -s "$(which zsh)" "${USER}"
 
+        # Set path in /etc/zsh/zshenv
+        echo "${WSL_ENV_PATH}" | sudo tee /etc/zsh/zshenv | tee -a ${LOG}
+
         # Install ZIM (https://zimfw.sh)
         mkdir -p "${HOME}/.config/zsh/zim"
         curl -fsSL "https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh" > "${HOME}/.config/zsh/zim/zimfw.zsh"
         zsh "${HOME}/.config/zsh/zim/zimfw.zsh" install
 
         # Remove old bash files
-        rm "${HOME}/.bash_history" "${HOME}/.bash_logout" "${HOME}/.bashrc" "${HOME}/.profile" 2> /dev/null
+        mv "${HOME}/.bash_history" "${HOME}/.bash_logout" "${HOME}/.bashrc" "${HOME}/.profile" "${OLD}" 2> /dev/null
 
 
         # Packages: zsh, prompt, rust, exa?

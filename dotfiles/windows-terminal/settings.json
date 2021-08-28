@@ -31,14 +31,16 @@
     "confirmCloseAllTabs": false,
     "copyFormatting": "none",
     "copyOnSelect": true,
-    "disabledProfileSources": [
+    "defaultProfile": "{2c4de342-38b7-51cf-b940-2309a097f518}",
+    "disabledProfileSources": 
+    [
         "Windows.Terminal.Azure"
     ],
-    "defaultProfile": "{2c4de342-38b7-51cf-b940-2309a097f518}",
     "profiles": 
     {
-        "defaults": {
-            "acrylicOpacity": 0.7,
+        "defaults": 
+        {
+            "acrylicOpacity": 0.69999999999999996,
             "bellStyle": 
             [
                 "window",
@@ -71,11 +73,11 @@
                 "startingDirectory": "//wsl$/Ubuntu/home/kailas"
             },
             {
+                "commandline": "python",
                 "guid": "{f51dbf38-2424-457b-a229-2a292d1bb7fd}",
                 "hidden": false,
-                "name": "Python",
-                "commandline": "python",
-                "icon": "ms-appdata:///roaming/python.ico"
+                "icon": "ms-appdata:///roaming/python.ico",
+                "name": "Python"
             }
         ]
     },
