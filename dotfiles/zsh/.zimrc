@@ -20,19 +20,26 @@ zmodule input
 # https://github.com/zimfw/termtitle
 zmodule termtitle
 
+# --------------------------------------------------------------
 # Additional completion definitions for Zsh.
-#zmodule zsh-users/zsh-completions
+# https://github.com/zsh-users/zsh-completions
+zmodule zsh-users/zsh-completions
 
 # --------------------------------------------------------------
 # Enables and configures smart and extensive tab completion.
 # completion must be sourced after zsh-users/zsh-completions
+# case-insensitive, etc
+# https://github.com/zimfw/completion
 zmodule completion
 
-# Fish-like autosuggestions for Zsh.
+# --------------------------------------------------------------
+# Type-ahead autosuggestions.
 #zmodule zsh-users/zsh-autosuggestions
+
 # Fish-like syntax highlighting for Zsh.
 # zsh-users/zsh-syntax-highlighting must be sourced after completion
 #zmodule zsh-users/zsh-syntax-highlighting
+
 # Fish-like history search (up arrow) for Zsh.
 # zsh-users/zsh-history-substring-search must be sourced after zsh-users/zsh-syntax-highlighting
 #zmodule zsh-users/zsh-history-substring-search
