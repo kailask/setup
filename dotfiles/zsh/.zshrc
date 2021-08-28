@@ -11,6 +11,20 @@ bindkey -v
 # Remove path separator from WORDCHARS.
 WORDCHARS=${WORDCHARS//[\/]}
 
+# -------
+# Aliases
+# -------
+
+# jump in stack
+alias d='dirs -v'
+for index ({1..9}) alias $index="cd +${index}"; unset index
+
+# alias c='clear'
+# # alias l='exa'
+# alias v='nvim'
+# alias vi='nvim'
+# alias top='htop'
+
 # --------------------
 # Module configuration
 # --------------------
@@ -144,17 +158,3 @@ SPACESHIP_JOBS_AMOUNT_PREFIX=''
 
 # Exit code
 SPACESHIP_EXIT_CODE_SHOW=true
-
-# -------
-# Aliases
-# -------
-
-# jump in stack
-alias d='dirs -v'
-for index ({1..9}) alias $index="cd +${index}"; unset index
-
-# alias c='clear'
-# # alias l='exa'
-# alias v='nvim'
-# alias vi='nvim'
-# alias top='htop'

@@ -26,6 +26,14 @@
                 "splitMode": "duplicate"
             },
             "keys": "ctrl+shift+d"
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u0015"
+            },
+            "keys": "shift+backspace"
         }
     ],
     "confirmCloseAllTabs": false,
