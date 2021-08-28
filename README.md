@@ -2,10 +2,10 @@
 Assorted software configurations and settings
 
 windows
-* Install Python
+* Install Python (microsoft store)
 * Install WSL (wsl --install)
-* Install Windows terminal
+* Install Windows terminal (microsoft store)
 * Install VSCode (user)
 * Install docker
-* Install font
+* Install nerd fonts
 * Run setup script
