@@ -34,7 +34,8 @@ zmodule completion
 
 # --------------------------------------------------------------
 # Type-ahead autosuggestions.
-#zmodule zsh-users/zsh-autosuggestions
+# https://github.com/zsh-users/zsh-autosuggestions
+zmodule zsh-users/zsh-autosuggestions
 
 # Fish-like syntax highlighting for Zsh.
 # zsh-users/zsh-syntax-highlighting must be sourced after completion

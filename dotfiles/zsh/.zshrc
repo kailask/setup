@@ -8,6 +8,10 @@ setopt HIST_IGNORE_ALL_DUPS
 # Set editor default keymap to emacs (`-e`) or vi (`-v`)
 bindkey -v
 
+# Ctrl+space to accept; Ctrl+enter to execute suggestions
+bindkey '^ ' autosuggest-accept
+bindkey '^\n' autosuggest-execute
+
 # Remove path separator from WORDCHARS.
 WORDCHARS=${WORDCHARS//[\/]}
 
@@ -44,23 +48,6 @@ zstyle ':zim:termtitle' hooks 'preexec' 'precmd'
 zstyle ':zim:termtitle:preexec' format '${${(A)=1}[1]}'
 zstyle ':zim:termtitle:precmd'  format '%1~'
 
-# # Customize the style that the suggestions are shown with.
-# # See https://github.com/zsh-users/zsh-autosuggestions/blob/master/README.md#suggestion-highlight-style
-# ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
-
-# #
-# # zsh-syntax-highlighting
-# #
-
-# # Set what highlighters will be used.
-# # See https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters.md
-# ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
-
-# # Customize the main highlighter styles.
-# # See https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters/main.md#how-to-tweak-it
-# typeset -A ZSH_HIGHLIGHT_STYLES
-# ZSH_HIGHLIGHT_STYLES[comment]='fg=242'
-
 # ------------------
 # Initialize modules
 # ------------------
@@ -74,6 +61,33 @@ source ${ZIM_HOME}/init.zsh
 # ------------------------------
 # Post-init module configuration
 # ------------------------------
+
+#
+# zsh-autosuggestions
+#
+
+# Customize the style that the suggestions are shown with.
+# See https://github.com/zsh-users/zsh-autosuggestions/blob/master/README.md#suggestion-highlight-style
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=247'
+
+# Suggest first from history, then tab completions
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
+# Max buffer size for autosuggestions
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=30
+
+#
+# zsh-syntax-highlighting
+#
+
+# # Set what highlighters will be used.
+# # See https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters.md
+# ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+
+# # Customize the main highlighter styles.
+# # See https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters/main.md#how-to-tweak-it
+# typeset -A ZSH_HIGHLIGHT_STYLES
+# ZSH_HIGHLIGHT_STYLES[comment]='fg=242'
 
 #
 # zsh-history-substring-search
