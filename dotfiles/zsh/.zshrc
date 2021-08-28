@@ -16,7 +16,7 @@ WORDCHARS=${WORDCHARS//[\/]}
 # --------------------
 
 # # Set a custom path for the completion dump file.
-# zstyle ':zim:completion' dumpfile "${ZDOTDIR:-${HOME}}/.zcompdump-${ZSH_VERSION}"
+zstyle ':zim:completion' dumpfile "${ZDOTDIR:-${HOME}}/.zcompdump-${ZSH_VERSION}"
 
 
 # Append `../` to your input for each `.` you type after an initial `..`
@@ -24,8 +24,11 @@ zstyle ':zim:input' double-dot-expand yes
 
 # Set a custom terminal title format using prompt expansion escape sequences.
 # See http://zsh.sourceforge.net/Doc/Release/Prompt-Expansion.html#Simple-Prompt-Escapes
-# If none is provided, the default '%n@%m: %~' is used.
-# zstyle ':zim:termtitle' format '%1~'
+# show the command name typed by the user while the command is being executed,
+# then the current directory name after the command ended
+zstyle ':zim:termtitle' hooks 'preexec' 'precmd'
+zstyle ':zim:termtitle:preexec' format '${${(A)=1}[1]}'
+zstyle ':zim:termtitle:precmd'  format '%1~'
 
 # #
 # # zsh-autosuggestions
@@ -62,22 +65,69 @@ source ${ZIM_HOME}/init.zsh
 # Post-init module configuration
 # ------------------------------
 
+#
+# Spaceship
+#
+
 SPACESHIP_PROMPT_ORDER=(
-  time          # Time stamps section
   user          # Username section
-  dir           # Current directory section
   host          # Hostname section
-  git           # Git section (git_branch + git_status)
-  # docker        # Docker section
-  exec_time     # Execution time
-  # line_sep      # Line break
-  vi_mode       # Vi-mode indicator
-  jobs          # Background jobs indicator
-  exit_code     # Exit code section
+  dir           # Current directory section
+  #vi_mode       # Vi-mode indicator
   char          # Prompt character
 )
 
+SPACESHIP_RPROMPT_ORDER=(
+  exit_code     # Exit code section
+  exec_time     # Execution time
+  jobs          # Background jobs indicator
+  # docker      # Docker section
+  git           # Git section (git_branch + git_status)
+)
+
+# https://upload.wikimedia.org/wikipedia/commons/1/15/Xterm_256color_chart.svg
+SPACESHIP_ORANGE='202'
+
+# Prompt
 SPACESHIP_PROMPT_ADD_NEWLINE=false
+SPACESHIP_PROMPT_SEPARATE_LINE=false
+SPACESHIP_PROMPT_DEFAULT_PREFIX=' '
+
+# Char
+SPACESHIP_CHAR_SYMBOL=' '
+SPACESHIP_CHAR_SYMBOL_SECONDARY='﬌ '
+SPACESHIP_CHAR_COLOR_SECONDARY=${SPACESHIP_ORANGE}
+
+# User & Host
+SPACESHIP_USER_SHOW='false'
+SPACESHIP_HOST_SHOW='true'
+SPACESHIP_HOST_COLOR_SSH=${SPACESHIP_ORANGE}
+
+# Dir
+SPACESHIP_DIR_PREFIX=${SPACESHIP_PROMPT_DEFAULT_PREFIX}
+SPACESHIP_DIR_TRUNC_PREFIX='…/'
+SPACESHIP_DIR_LOCK_SYMBOL=' '
+SPACESHIP_DIR_LOCK_COLOR=${SPACESHIP_ORANGE}
+
+# Git
+SPACESHIP_GIT_PREFIX=${SPACESHIP_PROMPT_DEFAULT_PREFIX}
+SPACESHIP_GIT_BRANCH_PREFIX=' '
+SPACESHIP_GIT_BRANCH_COLOR=${SPACESHIP_ORANGE}
+SPACESHIP_GIT_STATUS_COLOR='yellow'
+SPACESHIP_GIT_STATUS_PREFIX=' '
+SPACESHIP_GIT_STATUS_SUFFIX=''
+
+# Execution time
+SPACESHIP_EXEC_TIME_PREFIX=${SPACESHIP_PROMPT_DEFAULT_PREFIX}
+SPACESHIP_EXEC_TIME_COLOR='cyan'
+
+# Jobs
+SPACESHIP_JOBS_PREFIX=${SPACESHIP_PROMPT_DEFAULT_PREFIX}
+SPACESHIP_JOBS_SYMBOL=''
+SPACESHIP_JOBS_AMOUNT_PREFIX=''
+
+# Exit code
+SPACESHIP_EXIT_CODE_SHOW=true
 
 #
 # zsh-history-substring-search
