@@ -8,9 +8,11 @@ setopt HIST_IGNORE_ALL_DUPS
 # Set editor default keymap to emacs (`-e`) or vi (`-v`)
 bindkey -v
 
+# Jump by words and lines
 bindkey '^\b' backward-delete-word
 bindkey '^D' end-of-line
 bindkey '^A' beginning-of-line
+bindkey '^W' forward-word
 
 # Remove path separator from WORDCHARS.
 WORDCHARS=${WORDCHARS//[\/]}
