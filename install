@@ -149,14 +149,7 @@ setup_wsl() {
         sudo cp "${HOME}/exa/bin/exa" "/usr/local/bin"
         sudo cp ${HOME}/exa/man/* "/usr/share/man/man1"
         sudo cp "${HOME}/exa/completions/exa.zsh" "/usr/local/share/zsh/site-functions"
-        rm -r "${HOME}/exa" "${HOME}/exa.zip"
-
-
-        # Packages: zsh, prompt, rust, exa?
-
-        # Switch to default: nvim, zsh, exa?
-
-        
+        rm -r "${HOME}/exa" "${HOME}/exa.zip"       
     fi
 
     echo "--------------------------------------------------------------"
@@ -193,13 +186,6 @@ setup_wsl() {
 
         # Remove old bash files
         mv "${HOME}/.bash_history" "${HOME}/.bash_logout" "${HOME}/.bashrc" "${HOME}/.profile" "${OLD}" 2> /dev/null
-
-
-        # Packages: zsh, prompt, rust, exa?
-
-        # Switch to default: nvim, zsh, exa?
-
-        
     fi
 }
 

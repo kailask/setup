@@ -25,10 +25,14 @@ WORDCHARS=${WORDCHARS//[\/]}
 alias d='dirs -v'
 for index ({1..9}) alias $index="cd +${index}"; unset index
 
-# alias c='clear'
-# alias v='nvim'
-# alias vi='nvim'
-# alias top='htop'
+# General
+alias pg='ping 8.8.8.8'
+alias c='clear'
+alias top='htop'
+
+# Vim
+alias v='nvim'
+alias vi='nvim'
 
 # Exa
 alias ls='exa --group-directories-first --icons' # Simple view
