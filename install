@@ -31,6 +31,14 @@ EOF
 }
 
 # --------------------------------------------------------------
+# Print header to terminal
+print_header(){
+    echo "--------------------------------------------------------------"
+    echo "${1}"
+    echo "--------------------------------------------------------------"
+}
+
+# --------------------------------------------------------------
 # Parse and create links for all files in a folder
 make_symlinks(){
     while read -r line; do
@@ -44,7 +52,7 @@ make_symlinks(){
         esac
 
         # Skip file if it is in backup
-        [ $skip_existing ] && [ -e "${OLD}/${1}/${link_name}" ] && { echo "➖ ${1}/${link_name} is already linked, skipping"; continue; }
+        [ $skip_existing ] && [ -e "${OLD}/${1}/${link_name}" ] && { echo "➖ ${1}/${link_name} is already linked"; continue; }
 
         # Create parent folder if necessary
         [ -d "${link_parent}" ] || { echo "Creating folder ${link_parent}"; mkdir -p "${link_parent}"; }
@@ -96,7 +104,7 @@ make_windows_symlinks(){
         local link_parent="/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}/$(echo "${line}" | cut -f2 -d,)"
 
         # Skip file if it is in backup
-        [ $skip_existing ] && [ -e "${OLD}/${1}/${link_name}" ] && { echo "➖ ${1}/${link_name} is already linked, skipping"; continue; }
+        [ $skip_existing ] && [ -e "${OLD}/${1}/${link_name}" ] && { echo "➖ ${1}/${link_name} is already linked"; continue; }
 
         if [ -d "${link_parent}" ]; then
             # Backup if normal file (cant parse windows symlink), otherwise must remove since mklink can't overwrite
@@ -123,25 +131,15 @@ make_windows_symlinks(){
 setup_wsl() {
 
     if [ ! $link_only ]; then
-        echo "--------------------------------------------------------------"
-        echo "Updating and upgrading packages"
-        echo "--------------------------------------------------------------"
+        print_header "Updating and upgrading packages"
+        sudo apt-get update 2>> ${LOG} && sudo apt-get upgrade -y 2>> ${LOG}
 
-        # sudo apt-get update 2>> ${LOG} && sudo apt-get upgrade -y 2>> ${LOG}
-
-        echo "--------------------------------------------------------------"
-        echo "Configuring SSH"
-        echo "--------------------------------------------------------------"
-
+        print_header "Configuring SSH"
         # ssh-keygen -t rsa -b 4096
         # ssh-agent?      
 
-        echo "--------------------------------------------------------------"
-        echo "Installing packages: ${WSL_PACKAGES}"
-        echo "--------------------------------------------------------------"
-
+        print_header "Installing packages: ${WSL_PACKAGES}"
         sudo apt-get install ${WSL_PACKAGES} -y 2>> ${LOG}
-
         # Manually installing exa, can use apt if > 20.10
         # https://the.exa.website
         curl -fsSL "https://github.com/ogham/exa/releases/download/v0.10.0/exa-linux-x86_64-v0.10.0.zip" > "${HOME}/exa.zip"
@@ -152,13 +150,15 @@ setup_wsl() {
         rm -r "${HOME}/exa" "${HOME}/exa.zip"       
     fi
 
-    echo "--------------------------------------------------------------"
-    echo "Creating dotfile symlinks"
-    echo "--------------------------------------------------------------"
+    print_header "Creating dotfile symlinks"
 
     # Create link to Windows home
-    echo "Linking /mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER} -> ${WINDOWS_LINK}" | tee -a "${LOG}"
-    ln -sf "/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}" "${WINDOWS_LINK}"
+    if [ ! -e "${WINDOWS_LINK}" ]; then
+        echo "Linking /mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER} -> ${WINDOWS_LINK}" | tee -a "${LOG}"
+        ln -sf "/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}" "${WINDOWS_LINK}"
+    else
+        echo "➖ ${WINDOWS_LINK} is already linked"
+    fi
 
     for folder in ${WINDOWS_DOTFILES}; do
         make_windows_symlinks ${folder}
@@ -169,9 +169,7 @@ setup_wsl() {
     done
 
     if [ ! $link_only ]; then
-        echo "--------------------------------------------------------------"
-        echo "Setting up ZSH"
-        echo "--------------------------------------------------------------"
+        print_header "Setting up ZSH"
 
         # Set zsh to default shell
         sudo chsh -s "$(which zsh)" "${USER}"
