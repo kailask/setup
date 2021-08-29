@@ -26,10 +26,22 @@ alias d='dirs -v'
 for index ({1..9}) alias $index="cd +${index}"; unset index
 
 # alias c='clear'
-# # alias l='exa'
 # alias v='nvim'
 # alias vi='nvim'
 # alias top='htop'
+
+# Exa
+alias ls='exa --group-directories-first --icons' # Simple view
+alias ll='ls --long --git --color-scale --no-icons' # Long view
+alias la='ls --long --git --color-scale --grid --all --header --group --inode --links --blocks --modified --created' # Long view show everything
+
+alias l='ll --all' # Long view + dots (default)
+alias lr='ll --tree --level=5' # Long view + tree
+alias lx='ll -sextension' # Sorted by extension
+alias lk='ll -ssize' # Sorted by size
+alias lt='ll -smodified' # Sorted by modified
+
+alias tree='exa --tree --icons'
 
 # --------------------
 # Module configuration
