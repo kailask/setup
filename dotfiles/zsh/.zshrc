@@ -8,6 +8,10 @@ setopt HIST_IGNORE_ALL_DUPS
 # Set editor default keymap to emacs (`-e`) or vi (`-v`)
 bindkey -v
 
+bindkey '^\b' backward-delete-word
+bindkey '^D' end-of-line
+bindkey '^A' beginning-of-line
+
 # Remove path separator from WORDCHARS.
 WORDCHARS=${WORDCHARS//[\/]}
 
@@ -59,12 +63,24 @@ source ${ZIM_HOME}/init.zsh
 # ------------------------------
 
 #
+# Colors used for prompt and highlighting
+#
+
+# https://upload.wikimedia.org/wikipedia/commons/1/15/Xterm_256color_chart.svg
+RED='001'
+BLUE='012'
+YELLOW='011'
+ORANGE='202'
+GRAY='248'
+WHITE='015'
+
+#
 # zsh-autosuggestions
 #
 
 # Customize the style that the suggestions are shown with.
 # See https://github.com/zsh-users/zsh-autosuggestions/blob/master/README.md#suggestion-highlight-style
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=248'
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=${GRAY}"
 
 # Suggest first from history, then tab completions
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
@@ -80,32 +96,23 @@ bindkey '^\n' autosuggest-execute
 # zsh-history-substring-search
 #
 
-# # Bind ^[[A/^[[B manually so up/down works both before and after zle-line-init
+# Bind ^[[A/^[[B manually so up/down works both before and after zle-line-init
 # bindkey '^[[A' history-substring-search-up
 # bindkey '^[[B' history-substring-search-down
 
-# # Bind up and down keys
-# zmodload -F zsh/terminfo +p:terminfo
-# if [[ -n ${terminfo[kcuu1]} && -n ${terminfo[kcud1]} ]]; then
-#   bindkey ${terminfo[kcuu1]} history-substring-search-up
-#   bindkey ${terminfo[kcud1]} history-substring-search-down
-# fi
+# Bind up and down keys
+zmodload -F zsh/terminfo +p:terminfo
+if [[ -n ${terminfo[kcuu1]} && -n ${terminfo[kcud1]} ]]; then
+  bindkey ${terminfo[kcuu1]} history-substring-search-up
+  bindkey ${terminfo[kcud1]} history-substring-search-down
+fi
 
-# bindkey '^P' history-substring-search-up
-# bindkey '^N' history-substring-search-down
-# bindkey -M vicmd 'k' history-substring-search-up
-# bindkey -M vicmd 'j' history-substring-search-down
+# Bind up and down for vim mode
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
 
-#
-# Colors used for prompt and highlighting
-#
-
-# https://upload.wikimedia.org/wikipedia/commons/1/15/Xterm_256color_chart.svg
-RED='001'
-BLUE='012'
-YELLOW='011'
-ORANGE='202'
-GREEN='010'
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND="bg=${BLUE},fg=${WHITE}"
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND="bg=${RED},fg=${WHITE}"
 
 #
 # zsh-syntax-highlighting
@@ -126,10 +133,10 @@ ZSH_HIGHLIGHT_STYLES[precommand]="fg=${BLUE}"
 ZSH_HIGHLIGHT_STYLES[commandseparator]="fg=${YELLOW}"
 ZSH_HIGHLIGHT_STYLES[autodirectory]="fg=${BLUE},underline"
 ZSH_HIGHLIGHT_STYLES[path]="fg=underline"
-ZSH_HIGHLIGHT_STYLES[globbing]="fg=${GREEN}"
-ZSH_HIGHLIGHT_STYLES[history-expansion]="fg=${GREEN}"
-# ZSH_HIGHLIGHT_STYLES[single-hyphen-option]="fg=${GREEN}"
-# ZSH_HIGHLIGHT_STYLES[double-hyphen-option]="fg=${GREEN}"
+ZSH_HIGHLIGHT_STYLES[globbing]="fg=${ORANGE}"
+ZSH_HIGHLIGHT_STYLES[history-expansion]="fg=${ORANGE}"
+# ZSH_HIGHLIGHT_STYLES[single-hyphen-option]="fg=${ORANGE}"
+# ZSH_HIGHLIGHT_STYLES[double-hyphen-option]="fg=${ORANGE}"
 ZSH_HIGHLIGHT_STYLES[single-quoted-argument]="fg=${YELLOW}"
 ZSH_HIGHLIGHT_STYLES[double-quoted-argument]="fg=${YELLOW}"
 ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]="fg=${YELLOW}"
