@@ -1,0 +1,39 @@
+{
+    // Colors and Themeing
+    "workbench.colorTheme": "Material Theme Darker High Contrast",
+    "workbench.colorCustomizations": {
+        "[Material Theme Darker High Contrast]": {
+            "activityBarBadge.background": "#E35205",
+            "activityBar.activeBorder": "#E35205",
+            "list.activeSelectionForeground": "#E35205",
+            "list.inactiveSelectionForeground": "#E35205",
+            "list.highlightForeground": "#E35205",
+            "scrollbarSlider.activeBackground": "#E3520550",
+            "editorSuggestWidget.highlightForeground": "#E35205",
+            "textLink.foreground": "#E35205",
+            "progressBar.background": "#E35205",
+            "pickerGroup.foreground": "#E35205",
+            "tab.activeBorder": "#E35205",
+            "notificationLink.foreground": "#E35205",
+            "editorWidget.resizeBorder": "#E35205",
+            "editorWidget.border": "#E35205",
+            "settings.modifiedItemIndicator": "#E35205",
+            "settings.headerForeground": "#E35205",
+            "panelTitle.activeBorder": "#E35205",
+            "breadcrumb.activeSelectionForeground": "#E35205",
+            "menu.selectionForeground": "#E35205",
+            "menubar.selectionForeground": "#E35205",
+            "editor.findMatchBorder": "#E35205",
+            "selection.background": "#E3520540",
+            "statusBarItem.remoteBackground": "#E35205"
+        }
+    },
+    "materialTheme.accent": "Orange",
+    "workbench.iconTheme": "eq-material-theme-icons-darker",
+
+    // Font and Cursor
+    "editor.fontFamily": "FiraCode NF",
+    "editor.fontLigatures": true,
+    "editor.cursorSmoothCaretAnimation": true,
+    "editor.cursorBlinking": "phase"
+}

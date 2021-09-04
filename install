@@ -91,7 +91,7 @@ readonly WSL_ENV_PATH="PATH=\"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:
 readonly WSL_DOTFILES="${SHARED_DOTFILES} wsl"
 
 # Files that must be linked in windows filesystem
-readonly WINDOWS_DOTFILES="windows-terminal"
+readonly WINDOWS_DOTFILES="vscode/wsl windows-terminal"
 
 readonly WSL_PACKAGES="${SHARED_PACKAGES}"
 
