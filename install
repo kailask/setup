@@ -100,8 +100,10 @@ readonly WSL_PACKAGES="${SHARED_PACKAGES}"
 make_windows_symlinks(){
     while read -r line; do
         local link_name=$(echo "${line}" | cut -f1 -d,)
+        local link_path=$(echo "${line}" | cut -f2 -d,)
+        
         # Windows symlink paths must be relative to windows user home folder
-        local link_parent="/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}/$(echo "${line}" | cut -f2 -d,)"
+        local link_parent="/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}/${link_path}"
 
         # Skip file if it is in backup
         [ $skip_existing ] && [ -e "${OLD}/${1}/${link_name}" ] && { echo "➖ ${1}/${link_name} is already linked"; continue; }
@@ -116,11 +118,13 @@ make_windows_symlinks(){
             fi
 
             # Create windows compatible paths for symlink
-            local link="${WINDOWS_DRIVE}:\\Users\\${WINDOWS_USER}\\$(cut -f2 -d, "${DOTS}/${1}/${META}" | tr '/' '\\')\\${link_name}"
+            local link="${WINDOWS_DRIVE}:\\Users\\${WINDOWS_USER}\\$(echo "${link_path}" | tr '/' '\\')\\${link_name}"
             local target="\\\\wsl\$\\${DISTRO_NAME}$(echo "${DOTS}/${1}/${link_name}" | tr '/' '\\')"
 
+            echo "Linking ${target} -> ${link}"
+
             # Create symlink using cmd.exe
-            cmd.exe /c "mklink ${link} ${target}" 2>> ${LOG}
+            echo "" | cmd.exe /c "mklink ${link} ${target}" 2>> ${LOG}
             [ $? -ne 0 ] && echo "❌ Unable to create symlink for ${1}/${link_name}. Does cmd have admin rights?" >&2
         else 
             echo "❌ ${link_parent} does not exist. Is ${1} installed?" >&2
@@ -196,7 +200,7 @@ main() {
     rm -f ${LOG}
 
     # Get sudo privileges
-    if [ $(sudo printf "") ]; then exit 1; fi
+    if [ $(sudo echo "") ]; then exit 1; fi
 
     local platform=""
     local OPTIND=1
