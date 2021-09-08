@@ -124,7 +124,7 @@ make_windows_symlinks(){
             echo "Linking ${target} -> ${link}"
 
             # Create symlink using cmd.exe
-            echo "" | cmd.exe /c "mklink ${link} ${target}" 2>> ${LOG}
+            cmd.exe /c "mklink ${link} ${target}" < /dev/null 2>> ${LOG}
             [ $? -ne 0 ] && echo "❌ Unable to create symlink for ${1}/${link_name}. Does cmd have admin rights?" >&2
         else 
             echo "❌ ${link_parent} does not exist. Is ${1} installed?" >&2

@@ -35,5 +35,23 @@
     "editor.fontFamily": "FiraCode NF",
     "editor.fontLigatures": true,
     "editor.cursorSmoothCaretAnimation": true,
-    "editor.cursorBlinking": "phase"
+    "editor.cursorBlinking": "phase",
+
+    // Remote Extension
+    "remote.SSH.configFile": "\\\\wsl$\\Ubuntu\\home\\kailas\\.ssh\\config",
+
+    // Terminal
+    "terminal.external.windowsExec": "wt",
+    "workbench.panel.defaultLocation": "right",
+    "terminal.explorerKind": "external",
+
+    // Online Services
+    "telemetry.enableTelemetry": false,
+    "extensions.autoUpdate": "onlyEnabledExtensions",
+    "update.mode": "start",
+
+    // Misc
+    "extensions.ignoreRecommendations": true,
+    "editor.renderControlCharacters": true,
+    "workbench.activityBar.visible": false
 }
