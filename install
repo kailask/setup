@@ -93,7 +93,7 @@ readonly WSL_DOTFILES="${SHARED_DOTFILES} wsl"
 # Files that must be linked in windows filesystem
 readonly WINDOWS_DOTFILES="vscode/wsl windows-terminal"
 
-readonly WSL_PACKAGES="${SHARED_PACKAGES}"
+readonly WSL_PACKAGES="${SHARED_PACKAGES} clang-12"
 
 # Create a windows filesystem symlink for use with windows programs
 # https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/mklink
@@ -140,10 +140,13 @@ setup_wsl() {
 
         print_header "Configuring SSH"
         # ssh-keygen -t rsa -b 4096
-        # ssh-agent?      
+        # ssh-agent?
 
-        print_header "Installing packages: ${WSL_PACKAGES}"
-        sudo apt-get install ${WSL_PACKAGES} -y 2>> ${LOG}
+        for package in ${WSL_PACKAGES}; do
+            print_header "Installing ${package}"
+            sudo apt-get install ${package} -y 2>> ${LOG}
+        done
+
         # Manually installing exa, can use apt if > 20.10
         # https://the.exa.website
         curl -fsSL "https://github.com/ogham/exa/releases/download/v0.10.0/exa-linux-x86_64-v0.10.0.zip" > "${HOME}/exa.zip"
