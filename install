@@ -93,7 +93,7 @@ readonly WSL_DOTFILES="${SHARED_DOTFILES} wsl"
 # Files that must be linked in windows filesystem
 readonly WINDOWS_DOTFILES="vscode/wsl windows-terminal"
 
-readonly WSL_PACKAGES="${SHARED_PACKAGES} clang-12"
+readonly WSL_PACKAGES="${SHARED_PACKAGES} clang"
 
 # Create a windows filesystem symlink for use with windows programs
 # https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/mklink
