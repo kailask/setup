@@ -176,7 +176,7 @@ setup_wsl() {
         echo "Linking ${DRIVE_TARGET} -> ${DRIVE_LINK}" | tee -a "${LOG}"
         ln -sf "${DRIVE_TARGET}" "${DRIVE_LINK}"
     else
-        echo "➖ ${WINDOWS_LINK} is already linked"
+        echo "➖ ${DRIVE_LINK} is already linked"
     fi
 
     for folder in ${WINDOWS_DOTFILES}; do
