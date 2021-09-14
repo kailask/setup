@@ -36,8 +36,6 @@
     "editor.fontLigatures": true,
     "editor.cursorSmoothCaretAnimation": true,
     "editor.cursorBlinking": "phase",
-    // Remote Extension
-    "remote.SSH.configFile": "\\\\wsl$\\Ubuntu\\home\\kailas\\.ssh\\config",
     // Terminal
     "terminal.external.windowsExec": "wt",
     "workbench.panel.defaultLocation": "right",
@@ -53,9 +51,11 @@
     "extensions.ignoreRecommendations": true,
     "editor.renderControlCharacters": true,
     "workbench.activityBar.visible": false,
-    "editor.multiCursorModifier": "ctrlCmd",
     "editor.tabCompletion": "on",
     "editor.minimap.size": "fit",
+    // ------------- Extensions -------------
+    // Remote
+    "remote.SSH.configFile": "\\\\wsl$\\Ubuntu\\home\\kailas\\.ssh\\config",
     // C/C++
     "C_Cpp.autocompleteAddParentheses": true,
     "C_Cpp.default.cStandard": "c17",

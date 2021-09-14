@@ -80,6 +80,10 @@ readonly WINDOWS_DRIVE='c'
 readonly WINDOWS_LINK="${HOME}/win"
 readonly DISTRO_NAME='Ubuntu'
 
+# Google drive paths
+readonly DRIVE_LINK="${HOME}/drive"
+readonly DRIVE_TARGET="/mnt/g/My Drive"
+
 # Path to be put in /etc/zsh/zshenv
 readonly WSL_ENV_PATH="PATH=\"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:\
 /bin:/snap/bin:/mnt/${WINDOWS_DRIVE}/Windows/system32:/mnt/${WINDOWS_DRIVE}/Windows:\
@@ -163,6 +167,14 @@ setup_wsl() {
     if [ ! -e "${WINDOWS_LINK}" ]; then
         echo "Linking /mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER} -> ${WINDOWS_LINK}" | tee -a "${LOG}"
         ln -sf "/mnt/${WINDOWS_DRIVE}/Users/${WINDOWS_USER}" "${WINDOWS_LINK}"
+    else
+        echo "➖ ${WINDOWS_LINK} is already linked"
+    fi
+
+    # Create link to Google Drive
+    if [ ! -e "${DRIVE_LINK}" ]; then
+        echo "Linking ${DRIVE_TARGET} -> ${DRIVE_LINK}" | tee -a "${LOG}"
+        ln -sf "${DRIVE_TARGET}" "${DRIVE_LINK}"
     else
         echo "➖ ${WINDOWS_LINK} is already linked"
     fi

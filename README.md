@@ -14,11 +14,12 @@ wsl --install -d Ubuntu
 3. Install [VS Code](https://code.visualstudio.com/download#) (User)
 4. Install [FiraCode NF and Caskaydia Cove NF](https://www.nerdfonts.com/font-downloads)
 5. Install [Docker Desktop](https://hub.docker.com/editions/community/docker-ce-desktop-windows)
-6. Clone repo
+6. Install [Google Drive Desktop](https://www.google.com/drive/download/)
+7. Clone repo
 ```
 git clone "https://github.com/kailask/setup.git" ~/.setup
 ```
-7. Run install script from powershell with admin rights
+8. Run install script from powershell with admin rights
 ```
 wsl; ~/.setup/install -p wsl
 ```
