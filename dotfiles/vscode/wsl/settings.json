@@ -55,5 +55,10 @@
     "workbench.activityBar.visible": false,
     "editor.multiCursorModifier": "ctrlCmd",
     "editor.tabCompletion": "on",
-    "editor.minimap.size": "fit"
+    "editor.minimap.size": "fit",
+    // C/C++
+    "C_Cpp.autocompleteAddParentheses": true,
+    "C_Cpp.default.cStandard": "c17",
+    "C_Cpp.default.cppStandard": "c++17",
+    "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, IndentWidth: 4, AllowShortBlocksOnASingleLine: Empty, AllowShortIfStatementsOnASingleLine: WithoutElse }"
 }
