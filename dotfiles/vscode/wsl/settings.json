@@ -31,6 +31,7 @@
     "materialTheme.accent": "Orange",
     "workbench.iconTheme": "eq-material-theme-icons-darker",
     "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": true,
     // Font and Cursor
     "editor.fontFamily": "FiraCode NF",
     "editor.fontLigatures": true,
@@ -41,7 +42,7 @@
     "workbench.panel.defaultLocation": "right",
     "terminal.explorerKind": "external",
     // Online Services
-    "telemetry.enableTelemetry": false,
+    "telemetry.telemetryLevel": "crash",
     "extensions.autoUpdate": "onlyEnabledExtensions",
     "update.mode": "start",
     // Formatting
