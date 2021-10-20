@@ -29,9 +29,9 @@ for index ({1..9}) alias $index="cd +${index}"; unset index
 alias pg='ping 8.8.8.8'
 alias c='clear'
 alias top='htop'
-alias o='code .'
+alias o='code'
 
-# Vim
+# Nvim
 alias v='nvim'
 alias vi='nvim'
 
