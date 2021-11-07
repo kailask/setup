@@ -20,7 +20,7 @@ readonly SHARED_PACKAGES="python3 python-is-python3 python3-pip neovim zsh zip u
 
 print_usage(){
     cat << EOF
-Usage: ${0##*/} [-hsl] [-p {wsl}]
+Usage: ${0##*/} [-hsl] [-p {rpi,wsl}]
 Run setup script for specified platform.
 
     -h          display this help and exit
@@ -207,6 +207,60 @@ setup_wsl() {
 }
 
 # --------------------------------------------------------------
+# Configurations specific to Raspberry Pi OS
+
+readonly RPI_TIMEZONE='America/Los_Angeles'
+
+readonly RPI_PACKAGES="${SHARED_PACKAGES} exa"
+readonly RPI_DOTFILES="${SHARED_DOTFILES}"
+
+setup_rpi() {
+    if [ ! $link_only ]; then
+        print_header "Removing pi user"
+        sudo deluser --remove-home pi
+
+        print_header "Updating and upgrading packages"
+        sudo apt-get update 2>> ${LOG} && sudo apt-get upgrade -y 2>> ${LOG}
+
+        print_header "Setting timezone"
+        sudo timedatectl set-timezone ${RPI_TIMEZONE}
+
+        # print_header "Configuring SSH"
+        # ssh-keygen -t rsa -b 4096
+        # ssh-agent?
+
+        for package in ${RPI_PACKAGES}; do
+            print_header "Installing ${package}"
+            sudo apt-get install ${package} -y 2>> ${LOG}
+        done       
+    fi
+
+    print_header "Creating dotfile symlinks"
+
+    # for folder in ${RPI_DOTFILES}; do
+    #     make_symlinks ${folder}
+    # done
+
+    # if [ ! $link_only ]; then
+    #     print_header "Setting up ZSH"
+
+    #     # Set zsh to default shell
+    #     sudo chsh -s "$(which zsh)" "${USER}"
+
+    #     # Set path in /etc/zsh/zshenv
+    #     echo "${WSL_ENV_PATH}" | sudo tee /etc/zsh/zshenv | tee -a ${LOG}
+
+    #     # Install ZIM (https://zimfw.sh)
+    #     mkdir -p "${HOME}/.config/zsh/zim"
+    #     curl -fsSL "https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh" > "${HOME}/.config/zsh/zim/zimfw.zsh"
+    #     zsh "${HOME}/.config/zsh/zim/zimfw.zsh" install
+
+    #     # Remove old bash files
+    #     mv "${HOME}/.bash_history" "${HOME}/.bash_logout" "${HOME}/.bashrc" "${HOME}/.profile" "${OLD}" 2> /dev/null
+    # fi
+}
+
+# --------------------------------------------------------------
 # Parse options and execute platform specific configuration
 
 main() {
@@ -252,6 +306,9 @@ main() {
     case ${platform} in
         "wsl")
             setup_wsl
+            ;;
+        "rpi")
+            setup_rpi
             ;;
         *)
             echo "Invalid platform specified." >&2

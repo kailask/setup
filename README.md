@@ -23,3 +23,31 @@ git clone "https://github.com/kailask/setup.git" ~/.setup
 ```
 wsl; ~/.setup/install -p wsl
 ```
+
+### Setup on Raspberry Pi ([RPiOS Lite](https://downloads.raspberrypi.org/raspios_lite_arm64/images/))
+
+1. Create a [new user](https://www.raspberrypi.com/documentation/computers/configuration.html#changing-your-username) with sudo access
+```
+sudo adduser kailas;
+sudo usermod -aG adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,gpio,i2c,spi kailas
+```
+2. Make new user the default for Boot / Auto login
+```
+sudo raspi-config
+```
+3. Enable SSH access and connect over SSH
+```
+# Edit /etc/ssh/sshd_config to allow password
+sudo systemctl enable ssh; 
+sudo systemctl start ssh
+```
+4. Copy public key to `~/.ssh/authorized_keys`
+5. [Set hostname](https://thepihut.com/blogs/raspberry-pi-tutorials/19668676-renaming-your-raspberry-pi-the-hostname)
+6. Clone repo
+```
+git clone "https://github.com/kailask/setup.git" ~/.setup
+```
+7. Run install script
+```
+~/.setup/install -p rpi
+```
