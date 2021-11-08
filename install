@@ -211,7 +211,7 @@ setup_wsl() {
 
 readonly RPI_TIMEZONE='America/Los_Angeles'
 
-readonly RPI_PACKAGES="${SHARED_PACKAGES} exa"
+readonly RPI_PACKAGES="${SHARED_PACKAGES}"
 readonly RPI_DOTFILES="${SHARED_DOTFILES} sshd"
 
 setup_rpi() {
@@ -234,7 +234,7 @@ setup_rpi() {
             sudo apt-get install ${package} -y 2>> ${LOG}
         done      
 
-        # Manually installing exa
+        # Manually installing exa, available in sid (unstable)
         # https://the.exa.website
         curl -fsSL "https://github.com/ogham/exa/releases/download/v0.10.0/exa-linux-armv7-v0.10.0.zip" > "${HOME}/exa.zip"
         unzip -oq "${HOME}/exa.zip" -d "${HOME}/exa"
