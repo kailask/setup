@@ -232,7 +232,16 @@ setup_rpi() {
         for package in ${RPI_PACKAGES}; do
             print_header "Installing ${package}"
             sudo apt-get install ${package} -y 2>> ${LOG}
-        done       
+        done      
+
+        # Manually installing exa
+        # https://the.exa.website
+        curl -fsSL "https://github.com/ogham/exa/releases/download/v0.10.0/exa-linux-armv7-v0.10.0.zip" > "${HOME}/exa.zip"
+        unzip -oq "${HOME}/exa.zip" -d "${HOME}/exa"
+        sudo cp "${HOME}/exa/bin/exa" "/usr/local/bin"
+        sudo cp ${HOME}/exa/man/* "/usr/share/man/man1"
+        sudo cp "${HOME}/exa/completions/exa.zsh" "/usr/local/share/zsh/site-functions"
+        rm -r "${HOME}/exa" "${HOME}/exa.zip"   
     fi
 
     print_header "Creating dotfile symlinks"
