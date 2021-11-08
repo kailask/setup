@@ -193,6 +193,9 @@ setup_wsl() {
         # Set zsh to default shell
         sudo chsh -s "$(which zsh)" "${USER}"
 
+        # Set path in /etc/zsh/zshenv
+        echo "${WSL_ENV_PATH}" | sudo tee /etc/zsh/zshenv | tee -a ${LOG}
+
         # Install ZIM (https://zimfw.sh)
         mkdir -p "${HOME}/.config/zsh/zim"
         curl -fsSL "https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh" > "${HOME}/.config/zsh/zim/zimfw.zsh"
@@ -243,9 +246,6 @@ setup_rpi() {
 
         # Set zsh to default shell
         sudo chsh -s "$(which zsh)" "${USER}"
-
-        # Set path in /etc/zsh/zshenv
-        echo "${WSL_ENV_PATH}" | sudo tee /etc/zsh/zshenv | tee -a ${LOG}
 
         # Install ZIM (https://zimfw.sh)
         mkdir -p "${HOME}/.config/zsh/zim"
